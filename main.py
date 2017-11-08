@@ -31,13 +31,13 @@ def mongo_insert(fname = "name1", lname = "name2"):
     db = client.test
 
     posts = db.posts
-    for i in range(1000):
+    for i in range(200):
         posts.insert_one({"fname": fname, "lname": lname})
 
 def sql_insert(fname = "name1", lname = "name2"):
     conn = sqlite3.connect("example.db")
     c = conn.cursor()
-    for i in range(1000):
+    for i in range(200):
         c.execute("INSERT INTO test(fname, lname) VALUES (?, ?)",(fname, lname))
 
     c.execute("SELECT * FROM test")
@@ -54,7 +54,7 @@ def mongo_update(fname = "name3", lname = "name4"):
 
     posts = db.posts
 
-    resp = posts.aggregate([{"$sample": {"size": 5}}])
+    resp = posts.aggregate([{"$sample": {"size": 200}}])
 
     for i in resp:
         x = i["_id"]
@@ -66,7 +66,7 @@ def mongo_update(fname = "name3", lname = "name4"):
 def sql_update():
     conn = sqlite3.connect("example.db")
     c = conn.cursor()
-    c.execute("SELECT ROWID FROM test ORDER BY RANDOM() LIMIT 5")
+    c.execute("SELECT ROWID FROM test ORDER BY RANDOM() LIMIT 200")
     x  = c.fetchall()
     for i in x:
         c.execute("UPDATE test SET fname=?, lname=? WHERE ROWID=?", ("name2", "name3", i[0]))
@@ -88,7 +88,7 @@ def mongo_delete():
 
     posts = db.posts
 
-    resp = posts.aggregate([{"$sample": {"size": 5}}])
+    resp = posts.aggregate([{"$sample": {"size": 10000}}])
 
     for i in resp:
         x = i["_id"]
@@ -100,7 +100,7 @@ def mongo_delete():
 def sql_delete():
     conn = sqlite3.connect("example.db")
     c = conn.cursor()
-    c.execute("SELECT ROWID FROM test ORDER BY RANDOM() LIMIT 5")
+    c.execute("SELECT ROWID FROM test ORDER BY RANDOM() LIMIT 10000")
     x = c.fetchall()
     for i in x:
         c.execute("DELETE FROM test WHERE ROWID=?", i)
@@ -133,7 +133,7 @@ def timeit(func, db):
     func()
     if (db == 0):
         print("Mongo")
-        return time - mongo_time() + datetime.timedelta(milliseconds=50)
+        return time - mongo_time() + datetime.timedelta(milliseconds=100)
     else:
         print("SQL")
         # print(time1)
